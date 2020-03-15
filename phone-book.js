@@ -6,21 +6,20 @@ function phoneExistance(phone) {
     if (phoneBook.length === 0) {
         return false;
     }
-    for (let i = 0; i <= phoneBook.length; i++) {
+    for (let i = 0; i < phoneBook.length;) {
         if (phoneBook[i].phone === phone) {
-            return true;
+            return true; 
         } else {
             i++
-        }
-    return false;
+        }   
     }
-};
+    return false;
+}
 
 function Add(phone, name, mail) {
     // проверяем валидность введенных данных
-    // переписать с более простым вариантом (цифры могут быть в свободном порядке, беез повторений:
-    // главное, чтобы отфильтровывало по кол-ву символов
-    let phoneRegExp = /^5{3}[0-9]{3}[0-9]{2}[0-9]{2}$/;
+    // пропускает неповторя
+    let phoneRegExp = /^[0-9]{10}$/;
     if ((phoneRegExp.test(phone)) && (!phoneExistance(phone))) {
         phoneBook.push({phone: phone, name: name, mail: mail});
         return true;
@@ -29,26 +28,40 @@ function Add(phone, name, mail) {
 };
 
 function Update(phone, name, mail) {
-    if (typeof mail === 'undefined') mail === '';
-    if (typeof name === 'undefined') return false;
-    for (let i = 0; i <= phoneBook.length; i++) {
-        if (phoneBook[i].phone === phone) {
-            phoneBook[i].name = name;
-            phoneBook[i].mail = mail;
-            return true;
-        } else {
-            i++
+    if (phoneExistance(phone)) {
+        if (typeof mail === 'undefined') mail = '';
+        if (typeof name === 'undefined') return false;
+        for (let i = 0; i < phoneBook.length;) {
+            if (phoneBook[i].phone === phone) {
+                phoneBook[i].name = name;
+                phoneBook[i].mail = mail;
+                return true; 
+            } else {
+                i++;
+            }
         }
     }
     return false;
 };
 
-phoneBook.Add = Add;
-phoneBook.Update = Update;
+function Find(str) {
+    let result = [];
+    if (str === '*') {
+        for (let i = 0; i < phoneBook.length; i++) {
+            result += console.log(Object.values(phoneBook[i]));
+        }
+        console.log(result);
+    }
+};
 
-phoneBook.Add('5557772211', 'Alex', 'nibba');
-phoneBook.Add('5557772223', 'Alex', 'nibba');
-phoneBook.Update('5557772233', 'Boris');
+phoneBook.add = Add;
+phoneBook.update = Update;
+phoneBook.find = Find;
 
-console.log(phoneBook[0]);
+phoneBook.add('5557772211', 'Валера', 'nibba');
+phoneBook.add('5557772212', 'Борис', 'borya.zippa@gmail.com');
+phoneBook.add('5557772213', 'Антон', 'toxa.zippa@gmail.com');
+// phoneBook.update('5557772211', 'Boris');
+phoneBook.find('*');
 
+console.log(phoneBook.length);
