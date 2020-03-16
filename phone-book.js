@@ -45,13 +45,17 @@ function Update(phone, name, mail) {
 };
 
 function Find(str) {
-    let result = [];
-    if (str === '*') {
-        for (let i = 0; i < phoneBook.length; i++) {
-            result += console.log(Object.values(phoneBook[i]));
-        }
-        console.log(result);
-    }
+    // let result = [];
+    // if (str === '*') {
+    //     for (let i = 0; i < phoneBook.length; i++) {
+    //         result += console.log(Object.values(phoneBook[i]));
+    //     }
+    //     return console.log(typeof result);
+    // }
+    // for (let i = 0; i < phoneBook.length; i++) {};
+    let findArray = phoneBook.filter((elem, index) => String(Object.values(phoneBook[index])).indexOf(str) !== -1);
+    let sortArray = findArray.sort();
+    console.log(sortArray);
 };
 
 phoneBook.add = Add;
@@ -62,6 +66,6 @@ phoneBook.add('5557772211', 'Валера', 'nibba');
 phoneBook.add('5557772212', 'Борис', 'borya.zippa@gmail.com');
 phoneBook.add('5557772213', 'Антон', 'toxa.zippa@gmail.com');
 // phoneBook.update('5557772211', 'Boris');
-phoneBook.find('*');
+phoneBook.find('555');
 
-console.log(phoneBook.length);
+// console.log(phoneBook.length);
