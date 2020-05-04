@@ -4,7 +4,13 @@ exports.isStar = true;
 
 let phoneBook = [];
 
-exports.add = function (phone, name, mail) {
+phoneBook.add = add;
+phoneBook.update = update;
+phoneBook.find = find;
+phoneBook.findAndRemove = findAndRemove;
+phoneBook.importFromCsv = importFromCsv;
+
+function add(phone, name, mail) {
     let phoneRegExp = /^[5]{3}[0-9]{7}$/;
     if ((phoneRegExp.test(phone)) && (!phoneExistance(phone)) && (name !== undefined)) {
         phoneBook.push({ phone: phone, name: name, mail: mail });
@@ -13,7 +19,7 @@ exports.add = function (phone, name, mail) {
     }
 
     return false;
-};
+}
 
 function phoneExistance(phone) {
     if (phoneBook.length === 0) {
@@ -29,8 +35,8 @@ function phoneExistance(phone) {
     return false;
 }
 
-exports.update = function (phone, name, mail) {
-    if (!phoneExistance(phone)) {
+function update(phone, name, mail) {
+    if (phoneExistance(phone)) {
         return false;
     }
     if (typeof mail === 'undefined') {
@@ -49,9 +55,9 @@ exports.update = function (phone, name, mail) {
     }
 
     return false;
-};
+}
 
-exports.find = function (str) {
+function find(str) {
     if (str === '') {
         return [];
     }
@@ -71,7 +77,7 @@ exports.find = function (str) {
     });
 
     return result;
-};
+}
 
 function phoneBeauty(phone) {
     let a = `+7 (${phone.slice(0, 3)}) `;
@@ -82,8 +88,8 @@ function phoneBeauty(phone) {
     return [a, b, c, d].join('');
 }
 
-exports.findAndRemove = function (str) {
-    let elemsForRemove = exports.find(str);
+function findAndRemove(str) {
+    let elemsForRemove = phoneBook.find(str);
     let newElemsForRemove = elemsForRemove.map(element => {
         return element.split(', ');
     });
@@ -95,7 +101,7 @@ exports.findAndRemove = function (str) {
 
     let counterOfRemoved = 0;
     let currentRemoveElem = 0;
-    for (let i = 0; currentRemoveElem < newElemsForRemove.length;) {
+    for (let i = 0; i < phoneBook.length;) {
         if (newElemsForRemove[currentRemoveElem].phone === phoneBeauty(phoneBook[i].phone)) {
             phoneBook.splice(i, 1);
             currentRemoveElem++;
@@ -108,9 +114,17 @@ exports.findAndRemove = function (str) {
     }
 
     return counterOfRemoved;
-};
+}
 
-exports.importFromCsv = function (csv) {
+let excelOutput = [
+    'Борис;5552220022;boris@example.com',
+    'Григорий;5554440044;grisha@example.com',
+    'Алексей;5551110011;alex@example.com',
+    'Валерий;5553330033;valera@example.com',
+    'Неизвестный;3330033;unknown@example.com'
+].join('\n');
+
+function importFromCsv(csv) {
     if (typeof csv !== 'string') {
         return false;
     }
@@ -122,15 +136,25 @@ exports.importFromCsv = function (csv) {
     for (let i = 0; i < rawArray.length; i++) {
         currentUser = rawArray[i].split(';');
 
-        if (exports.add(currentUser[1], currentUser[0], currentUser[2])) {
+        if (phoneBook.add(currentUser[1], currentUser[0], currentUser[2])) {
             countOfImported++;
             continue;
         }
 
-        if (exports.update(currentUser[1], currentUser[0], currentUser[2])) {
+        if (phoneBook.update(currentUser[1], currentUser[0], currentUser[2])) {
             countOfImported++;
         }
     }
 
     return countOfImported;
-};
+}
+
+// phoneBook.add('5557772211', 'Валера', 'valera@gmail.com');
+// phoneBook.add('5557772212', 'Борис', 'borya.zippa@gmail.com');
+// phoneBook.add('5557772213', 'Антон', 'toxa.zippa@gmail.com');
+// phoneBook.add('3337572214', 'Евгений', 'evg@gmail.com');
+// phoneBook.add('5557572214', 'Евгений', 'evg@gmail.com');
+// phoneBook.update('5557772211', 'Геннадий');
+// phoneBook.find('@');
+// phoneBook.findAndRemove('@');
+phoneBook.importFromCsv(excelOutput);
