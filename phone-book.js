@@ -4,18 +4,29 @@ exports.isStar = true;
 
 let phoneBook = [];
 
-exports.add = function (phone, name, mail) {
-    let phoneRegExp = /^[5]{3}[0-9]{7}$/;
-    if ((phoneRegExp.test(phone)) && (!phoneExistance(phone)) && (name !== undefined)) {
-        phoneBook.push({ phone: phone, name: name, mail: mail });
+function getBeautyPhoneBook(array) {
+    let sortedPhoneBook = array.sort((a, b) => a.name > b.name ? 1 : -1);
+    let beautyPhoneBook = sortedPhoneBook.map((item) => {
+        if (item.mail === '') {
+            return `${item.name}, ${makePhoneBeauty(item.phone)}`;
+        }
 
-        return true;
-    }
+        return `${item.name}, ${makePhoneBeauty(item.phone)}, ${item.mail}`;
+    });
 
-    return false;
-};
+    return beautyPhoneBook;
+}
 
-function phoneExistance(phone) {
+function makePhoneBeauty(phone) {
+    let a = `+7 (${phone.slice(0, 3)}) `;
+    let b = `${phone.slice(3, 6)}-`;
+    let c = `${phone.slice(6, 8)}-`;
+    let d = `${phone.slice(8, 10)}`;
+
+    return [a, b, c, d].join('');
+}
+
+function checkPhoneExistance(phone) {
     if (phoneBook.length === 0) {
         return false;
     }
@@ -29,8 +40,19 @@ function phoneExistance(phone) {
     return false;
 }
 
+exports.add = function (phone, name, mail) {
+    let phoneRegExp = /^[5]{3}[0-9]{7}$/;
+    if ((phoneRegExp.test(phone)) && (!checkPhoneExistance(phone)) && (name !== undefined)) {
+        phoneBook.push({ phone: phone, name: name, mail: mail });
+
+        return true;
+    }
+
+    return false;
+};
+
 exports.update = function (phone, name, mail) {
-    if (!phoneExistance(phone)) {
+    if (!checkPhoneExistance(phone)) {
         return false;
     }
     if (typeof mail === 'undefined') {
@@ -56,31 +78,14 @@ exports.find = function (str) {
         return [];
     }
     if (str === '*') {
-        str = '555';
+        return getBeautyPhoneBook(phoneBook);
     }
     let findArray = phoneBook.filter((elem, index) => {
         return String(Object.values(phoneBook[index])).indexOf(str) !== -1;
     });
-    let sortArray = findArray.sort((a, b) => a.name > b.name ? 1 : -1);
-    let result = sortArray.map((item) => {
-        if (item.mail === '') {
-            return `${item.name}, ${phoneBeauty(item.phone)}`;
-        }
 
-        return `${item.name}, ${phoneBeauty(item.phone)}, ${item.mail}`;
-    });
-
-    return result;
+    return getBeautyPhoneBook(findArray);
 };
-
-function phoneBeauty(phone) {
-    let a = `+7 (${phone.slice(0, 3)}) `;
-    let b = `${phone.slice(3, 6)}-`;
-    let c = `${phone.slice(6, 8)}-`;
-    let d = `${phone.slice(8, 10)}`;
-
-    return [a, b, c, d].join('');
-}
 
 exports.findAndRemove = function (str) {
     let elemsForRemove = exports.find(str);
@@ -96,7 +101,7 @@ exports.findAndRemove = function (str) {
     let counterOfRemoved = 0;
     let currentRemoveElem = 0;
     for (let i = 0; currentRemoveElem < newElemsForRemove.length;) {
-        if (newElemsForRemove[currentRemoveElem].phone === phoneBeauty(phoneBook[i].phone)) {
+        if (newElemsForRemove[currentRemoveElem].phone === makePhoneBeauty(phoneBook[i].phone)) {
             phoneBook.splice(i, 1);
             currentRemoveElem++;
             counterOfRemoved++;

@@ -11,7 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\phone-book — копия.js"
+            "program": "${workspaceFolder}\\phone-book.js"
         }
     ]
 }
